@@ -1,25 +1,14 @@
 import type { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
+import { Providers } from "./providers"; // ← add this
 
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
-const notoSansJP = Noto_Sans_JP(
-  {
-    variable: "--font-noto-sans",
-    subsets:["latin"],
-    weight:["400"]
-  }
-)
+const notoSansJP = Noto_Sans_JP({
+  variable: "--font-noto-sans",
+  subsets: ["latin"],
+  weight: ["400"],
+});
 
 export const metadata: Metadata = {
   title: "Book commerce",
@@ -28,16 +17,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="ja">
-      <body
-        className={`${notoSansJP.variable} ${notoSansJP.variable} antialiased`}
-      >
-        <Header></Header>
-        {children}
+      <body className={`${notoSansJP.variable} antialiased`}>
+        <Providers>   {/* ← wrap everything */}
+          <Header />
+          {children}
+        </Providers>
       </body>
     </html>
   );

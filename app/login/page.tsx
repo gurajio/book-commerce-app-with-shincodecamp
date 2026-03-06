@@ -1,18 +1,43 @@
-// "use client";
+"use client";
 
-// eslint-disable-next-line @next/next/no-async-client-component
-async function Login() {
+import { useEffect, useState } from "react";
+import { getProviders, signIn, ClientSafeProvider } from "next-auth/react";
+
+export default function Login() {
+  const [providers, setProviders] = useState<Record<string, ClientSafeProvider> | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+
+    (async () => {
+        const res = await getProviders();
+        if (!alive) return;
+        console.log(res);
+        setProviders(res);
+    })();
+
+    return () => {
+        alive = false;
+    };
+    }, []);
+
     return (
         <div className="flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8">
-                <div>
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                    アカウントにログイン
-                </h2>
-                </div>
-                <div className="mt-8 space-y-6">
-                <div className="text-center">
-                    <button className="bg-gray-900 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center w-full">
+        <div className="max-w-md w-full space-y-8">
+            <div>
+            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                アカウントにログイン
+            </h2>
+            </div>
+
+            <div className="mt-8 space-y-6">
+            {providers &&
+                Object.values(providers).map((provider) => (
+                <div key={provider.id} className="text-center">
+                    <button
+                    onClick={() => signIn(provider.id, { callbackUrl: "/" })}
+                    className="bg-gray-900 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center w-full"
+                    >
                     <svg
                         role="img"
                         viewBox="0 0 24 24"
@@ -26,10 +51,9 @@ async function Login() {
                     <span>Githubでログイン</span>
                     </button>
                 </div>
-                </div>
+                ))}
             </div>
+        </div>
         </div>
     );
 }
-
-export default Login;
