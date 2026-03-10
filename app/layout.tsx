@@ -3,6 +3,8 @@ import { Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
 import { Providers } from "./providers"; // ← add this
+import { Suspense } from "react";
+import Loading from "./loading"
 
 const notoSansJP = Noto_Sans_JP({
   variable: "--font-noto-sans",
@@ -23,9 +25,11 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={`${notoSansJP.variable} antialiased`}>
-        <Providers>   {/* ← wrap everything */}
+        <Providers>
           <Header />
-          {children}
+            <Suspense fallback={<Loading/>}>
+              {children}
+            </Suspense>
         </Providers>
       </body>
     </html>
